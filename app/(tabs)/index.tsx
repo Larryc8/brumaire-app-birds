@@ -1,98 +1,165 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import * as FileSystem from 'expo-file-system';
+import * as ImagePicker from 'expo-image-picker';
+import React, { useState } from 'react';
+import { ActivityIndicator, Alert, Button, ScrollView, StyleSheet, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
+import { useConfig } from '@/components/ConfigContext';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const { downloadUrl, uploadUrl, downloadDirectory } = useConfig();
+  const [downloading, setDownloading] = useState(false);
+  const [uploading, setUploading] = useState(false);
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  const handleDownload = async () => {
+    if (!downloadUrl) {
+      Alert.alert('Configuration Missing', 'Please set a Download URL in the Config tab.');
+      return;
+    }
+
+    setDownloading(true);
+    try {
+      const dir = FileSystem.documentDirectory + (downloadDirectory || 'birds') + '/';
+      await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+
+      const timestamp = new Date().getTime();
+      const filename = `bird_${timestamp}.jpg`;
+      const fileUri = dir + filename;
+
+      // Note: In a real scenario, we might want to handle file extensions dynamically based on content-type
+      const { uri } = await FileSystem.downloadAsync(downloadUrl, fileUri);
+
+      Alert.alert('Success', `Image downloaded to ${uri}`);
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Failed to download image. Check URL or internet connection.');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!uploadUrl) {
+      Alert.alert('Configuration Missing', 'Please set an Upload URL in the Config tab.');
+      return;
+    }
+
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 0.5,
+        base64: true,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setUploading(true);
+        const asset = result.assets[0];
+        const base64Data = asset.base64;
+
+        if (!base64Data) {
+          throw new Error('No base64 data available');
+        }
+
+        const payload = {
+          image: base64Data,
+          fileName: asset.fileName || 'upload.jpg',
+          type: asset.mimeType || 'image/jpeg',
+        };
+
+        const response = await fetch(uploadUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+        if (response.ok) {
+          Alert.alert('Success', 'Image uploaded successfully!');
+        } else {
+          Alert.alert('Error', `Upload failed with status: ${response.status}`);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert('Error', 'Failed to upload image.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <ThemedView style={styles.headerContainer}>
+          <ThemedText type="title">Bird Monitor</ThemedText>
+        </ThemedView>
+
+        <ThemedView style={styles.section}>
+          <ThemedText style={styles.description}>
+            Welcome to the Bird Monitoring Interface.
+          </ThemedText>
+          <ThemedText style={styles.description}>
+            Use the buttons below to download bird images from the configured server or upload your own sightings.
+          </ThemedText>
+        </ThemedView>
+
+        <ThemedView style={styles.actions}>
+          <View style={styles.buttonContainer}>
+            <Button
+              title="Download Image"
+              onPress={handleDownload}
+              disabled={downloading}
+            />
+            {downloading && <ActivityIndicator style={styles.loader} />}
+          </View>
+
+          <View style={styles.buttonContainer}>
+            <Button
+              title="Upload Image"
+              onPress={handleUpload}
+              disabled={uploading}
+              color="#4CAF50"
+            />
+            {uploading && <ActivityIndicator style={styles.loader} />}
+          </View>
+        </ThemedView>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  content: {
+    padding: 20,
+    paddingBottom: 40,
+  },
+  headerContainer: {
+    marginBottom: 24,
     alignItems: 'center',
-    gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  section: {
+    marginBottom: 32,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  description: {
+    fontSize: 16,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  actions: {
+    gap: 20,
+  },
+  buttonContainer: {
+    marginBottom: 16,
+  },
+  loader: {
+    marginTop: 10,
   },
 });
