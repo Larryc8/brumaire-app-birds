@@ -8,8 +8,10 @@ interface ConfigContextType {
     setDownloadUrl: (url: string) => void;
     setUploadUrl: (url: string) => void;
     setDownloadDirectory: (dir: string) => void;
+    setUseExternalDirectory: (useExternal: boolean) => void;
     saveConfig: () => Promise<void>;
     isLoading: boolean;
+    useExternalDirectory: boolean;
 }
 
 const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
@@ -26,6 +28,7 @@ export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const [downloadUrl, setDownloadUrl] = useState('');
     const [uploadUrl, setUploadUrl] = useState('');
     const [downloadDirectory, setDownloadDirectory] = useState('birds');
+    const [useExternalDirectory, setUseExternalDirectory] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -37,9 +40,12 @@ export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             const savedDownloadUrl = await AsyncStorage.getItem('downloadUrl');
             const savedUploadUrl = await AsyncStorage.getItem('uploadUrl');
             const savedDownloadDirectory = await AsyncStorage.getItem('downloadDirectory');
+            const savedUseExternalDirectory = await AsyncStorage.getItem('useExternalDirectory');
+
             if (savedDownloadUrl) setDownloadUrl(savedDownloadUrl);
             if (savedUploadUrl) setUploadUrl(savedUploadUrl);
             if (savedDownloadDirectory) setDownloadDirectory(savedDownloadDirectory);
+            if (savedUseExternalDirectory) setUseExternalDirectory(savedUseExternalDirectory === 'true');
         } catch (e) {
             console.error('Failed to load config', e);
         } finally {
@@ -52,6 +58,7 @@ export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             await AsyncStorage.setItem('downloadUrl', downloadUrl);
             await AsyncStorage.setItem('uploadUrl', uploadUrl);
             await AsyncStorage.setItem('downloadDirectory', downloadDirectory);
+            await AsyncStorage.setItem('useExternalDirectory', String(useExternalDirectory));
         } catch (e) {
             console.error('Failed to save config', e);
         }
@@ -66,8 +73,10 @@ export const ConfigProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 setDownloadUrl,
                 setUploadUrl,
                 setDownloadDirectory,
+                setUseExternalDirectory,
                 saveConfig,
                 isLoading,
+                useExternalDirectory,
             }}
         >
             {children}

@@ -9,15 +9,19 @@ export const unstable_settings = {
   anchor: '(tabs)',
 };
 
+import { ConfigProvider } from '@/components/ConfigContext';
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
+      <ConfigProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        </Stack>
+      </ConfigProvider>
       <StatusBar style="auto" />
     </ThemeProvider>
   );
