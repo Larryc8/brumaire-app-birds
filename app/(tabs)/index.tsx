@@ -110,7 +110,15 @@ export default function HomeScreen() {
 
   const processFiles = async () => {
     console.log("Starting sequential processing...");
-    const fileList = await getFiles();
+    try {
+      const fileList = await getFiles();
+    } catch {
+      Alert.alert(
+        "Error",
+        "Error de conexión: El servidor de descarga no responde. Valide que la dirección URL sea correcta.",
+      );
+      return;
+    }
 
     for (const item of fileList) {
       try {
@@ -282,7 +290,10 @@ export default function HomeScreen() {
                   await FileSystem.makeDirectoryAsync(dir, {
                     intermediates: true,
                   });
-                  Alert.alert("Éxito", "Todas las imágenes han sido eliminadas.");
+                  Alert.alert(
+                    "Éxito",
+                    "Todas las imágenes han sido eliminadas.",
+                  );
                 } else {
                   Alert.alert(
                     "Info",
@@ -308,34 +319,40 @@ export default function HomeScreen() {
         </ThemedView>
 
         <ThemedView style={styles.section}>
+          <ThemedText type="subtitle">Paso 1: </ThemedText>
           <ThemedText style={styles.description}>
-            Bienvenido a la Interfaz de Monitoreo de Aves.
-          </ThemedText>
-          <ThemedText style={styles.description}>
-            Use los botones a continuación para descargar imágenes de aves desde el servidor configurado o cargar sus propios avistamientos.
+            Paso 1: Use el botón "Descargar imágenes" a continuación para
+            descargar imágenes de aves desde la ESP32 configurado.
           </ThemedText>
         </ThemedView>
 
         <ThemedView style={styles.actions}>
           <View style={styles.buttonContainer}>
             <Button
-              title="Descargar Imagen"
+              title="Descargar Imagenes"
               onPress={processFiles}
               disabled={downloading}
             />
             {downloading && <ActivityIndicator style={styles.loader} />}
           </View>
-
           <View style={styles.buttonContainer}>
+            <ThemedText type="subtitle">Paso 2: </ThemedText>
+            <ThemedText style={styles.description}>
+              Utilice el botón de "Subir imagenes al servidor" para subir las
+              imagenes al servidor remoto.
+            </ThemedText>
             <Button
-              title="Cargar Imagen"
+              title="Subir imagenes al servidor"
               onPress={processImageToText}
               disabled={uploading}
-              color="#4CAF50"
+              color="green"
             />
             {uploading && <ActivityIndicator style={styles.loader} />}
           </View>
-
+          <ThemedText style={styles.description}>
+            Utilice el botón de "Eliminar todas las imágenes" para borrar los
+            archivos guardados en el almacenamiento interno del dispositivo.
+          </ThemedText>
           <View style={styles.buttonContainer}>
             <Button
               title="Eliminar todas las imágenes"

@@ -1,0 +1,52 @@
+2025-11-17T22-13-28,BIRD,-0
+2025-11-17T22-13-28,-,Temperatura ambiente,1
+2025-11-17T22-13-28,-,Temperatura caja interna,20
+2025-11-17T22-13-28,-,Placa fria 1,20
+2025-11-17T22-13-28,-,Placa fria 2,20
+2025-11-17T22-13-28,-,Temperatura media fria,20
+2025-11-17T22-13-28,-,Temperatura objetivo,20
+2025-11-17T22-13-28,-,Humedad externa,20
+2025-11-17T22-13-28,-,Humedad interna,20
+2025-11-17T22-13-28,-,Error,20
+2025-11-17T22-13-28,-,Error acumulado,20
+2025-11-17T22-13-28,-,Punto de rocio,20
+2025-11-17T22-13-28,-,PWM aplicado,20
+2025-11-17T22-13-28,-,Corriente de Panel,20
+2025-11-17T22-13-28,-,Corriente de Turbina,20
+2025-11-17T22-13-28,-,Corriente de Bateria,20
+2025-11-17T22-13-28,-,Peso del agua,20
+2025-11-17T22-13-46,BIRD,-0
+2025-11-17T22-13-46,-,Temperatura ambiente,20
+2025-11-17T22-13-46,-,Temperatura caja interna,20
+2025-11-17T22-13-46,-,Placa fria 1,20
+2025-11-17T22-13-46,-,Placa fria 2,20
+2025-11-17T22-13-46,-,Temperatura media fria,20
+2025-11-17T22-13-46,-,Temperatura objetivo,20
+2025-11-17T22-13-46,-,Humedad externa,20
+2025-11-17T22-13-46,-,Humedad interna,20
+2025-11-17T22-13-46,-,Error,20
+2025-11-17T22-13-46,-,Error acumulado,20
+2025-11-17T22-13-46,-,Punto de rocio,20
+2025-11-17T22-13-46,-,PWM aplicado,20
+2025-11-17T22-13-46,-,Corriente de Panel,20
+2025-11-17T22-13-46,-,Corriente de Turbina,20
+2025-11-17T22-13-46,-,Corriente de Bateria,20
+2025-11-17T22-13-46,-,Peso del agua,20
+2025-11-17T22-14-03,BIRD,-0
+2025-11-17T22-14-03,-,Temperatura ambiente,20
+2025-11-17T22-14-03,-,Temperatura caja interna,20
+2025-11-17T22-14-03,-,Placa fria 1,20
+2025-11-17T22-14-03,-,Placa fria 2,20
+2025-11-17T22-14-03,-,Temperatura media fria,20
+2025-11-17T22-14-03,-,Temperatura objetivo,20
+2025-11-17T22-14-03,-,Humedad externa,20
+2025-11-17T22-14-03,-,Humedad interna,20
+2025-11-17T22-14-03,-,Error,20
+2025-11-17T22-14-03,-,Error acumulado,20
+2025-11-17T22-14-03,-,Punto de rocio,20
+2025-11-17T22-14-03,-,PWM aplicado,20
+2025-11-17T22-14-03,-,Corriente de Panel,20
+2025-11-17T22-14-03,-,Corriente de Turbina,20
+2025-11-17T22-14-03,-,Corriente de Bateria,20
+2025-11-17T22-14-03,-,Peso del agua,20
+2025-11-17T22-17-00,PERIODIC,-0
