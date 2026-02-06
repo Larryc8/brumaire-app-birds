@@ -104,7 +104,8 @@ export default function HomeScreen() {
     console.log(downloadUrl);
     // 2. Parse the JSON response
     const json = await response.json();
-    const fileNames = json.map((item) => item.file);
+    const { files } = json;
+    const fileNames = files.map((item) => item.file);
     return fileNames;
   };
 
@@ -112,10 +113,10 @@ export default function HomeScreen() {
     console.log("Starting sequential processing...");
     try {
       const fileList = await getFiles();
-    } catch {
+    } catch (error) {
       Alert.alert(
         "Error",
-        "Error de conexión: El servidor de descarga no responde. Valide que la dirección URL sea correcta.",
+        `Error de conexión: El servidor de descarga no responde. Valide que la dirección URL sea correcta.... ${error.message}`,
       );
       return;
     }

@@ -12,24 +12,28 @@ const server = http.createServer((req, res) => {
   if (pathname === "/files") {
     res.writeHead(200, { "Content-Type": "application/json" });
     res.end(
-      JSON.stringify([
-        {
-          file: "imagen_1.jpg",
-          size: 204800,
-        },
-        {
-          file: "imagen_2.jpg",
-          size: 10240,
-        },
-        {
-          file: "imagen_3.jpg",
-          size: 10240,
-        },
-        {
-          file: "imagen_4.jpg",
-          size: 10240,
-        },
-      ]),
+      JSON.stringify({
+        files: [
+          {
+            file: "imagen_1.jpg",
+            size: 204800,
+          },
+          {
+            file: "imagen_2.jpg",
+            size: 10240,
+          },
+          {
+            file: "imagen_3.jpg",
+            size: 10240,
+          },
+          {
+            file: "imagen_4.jpg",
+            size: 10240,
+          },
+        ],
+        has_more: false,
+        total: 4,
+      }),
     );
   } else if (pathname === "/download") {
     const file = parsedUrl.searchParams.get("file");
